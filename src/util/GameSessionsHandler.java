@@ -12,44 +12,75 @@ import interfaces.GameSessionsHandlerInterface;
 public class GameSessionsHandler implements GameSessionsHandlerInterface {
 
 	private ConcurrentHashMap<String, GameSession> sessions;
-	
-	public GameSession findSession( Player _player ) {
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see interfaces.GameSessionsHandlerInterface#findSession(game.Player)
+	 */
+	public GameSession findSession(Player _player) {
 
 		Iterator<Entry<String, GameSession>> i = this.sessions.entrySet().iterator();
-		
-		while( i.hasNext() ) {
-			
-			Map.Entry<String, GameSession> pair = ( Map.Entry<String, GameSession> ) i.next();
-			
+
+		while (i.hasNext()) {
+
+			Map.Entry<String, GameSession> pair = (Map.Entry<String, GameSession>) i.next();
+
 			GameSession session = pair.getValue();
-			
-			if( session.gameData.fits( _player ) ) { return session; }
-			
+
+			if (session.gameData.fits(_player)) {
+				return session;
+			}
+
 		}
 
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see interfaces.GameSessionsHandlerInterface#newSession()
+	 */
 	public GameSession newSession() {
-		
+
 		GameSession session = new GameSession();
-		this.sessions.put( session.id , session );
+		this.sessions.put(session.id, session);
 
 		return session;
 
 	}
 
-	public GameSession newSession( GameData _gameData ) {
-	
-		GameSession session = new GameSession( _gameData );		
-		this.sessions.put( session.id , session );
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see interfaces.GameSessionsHandlerInterface#newSession(game.GameData)
+	 */
+	public GameSession newSession(GameData _gameData) {
+
+		GameSession session = new GameSession(_gameData);
+		this.sessions.put(session.id, session);
 
 		return session;
 
 	}
 
-	public void endSession( GameSession _session ) { this.sessions.remove( _session.id ); }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see interfaces.GameSessionsHandlerInterface#endSession(util.GameSession)
+	 */
+	public void endSession(GameSession _session) {
+		this.sessions.remove(_session.id);
+	}
 
-	public void endSession( String _sessionID ) { this.sessions.remove( _sessionID ); }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see interfaces.GameSessionsHandlerInterface#endSession(java.lang.String)
+	 */
+	public void endSession(String _sessionID) {
+		this.sessions.remove(_sessionID);
+	}
 
 }
