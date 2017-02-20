@@ -1,9 +1,13 @@
 package com;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import constants.Commands.Action;
-import constants.Commands.Key;
+import game.Player;
+import game.util.Position;
 import util.Client;
 import util.ClientsHandler;
 import util.Debug;
@@ -122,10 +126,20 @@ public class ServerSender implements Runnable {
 	 * @return The transferable list of players
 	 */
 	private Transferable transferablePosition() {
-		HashMap<Action, Key> ret = new HashMap<Action, Key>();
+		HashMap<String, Position> ret = new HashMap<String, Position>();
+		Iterator<Entry<String, Player>> i = this.client.session.gameData.players.entrySet().iterator();
+
+		while (i.hasNext()) {
+
+			Map.Entry<String, Player> pair = (Map.Entry<String, Player>) i.next();
+
+			Player tplayer = pair.getValue();
+			
+			ret.put(tplayer.clientID, tplayer.position);
+		}
 		
 
-		return new Transferable(Action.UPDATE_MOVEMENT, this.client.session.gameData.players);
+		return new Transferable(Action.UPDATE_MOVEMENT, ret);
 
 	}
 
