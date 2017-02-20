@@ -1,8 +1,9 @@
 package com;
 
-import java.io.IOException;
+import java.util.HashMap;
 
 import constants.Commands.Action;
+import constants.Commands.Key;
 import util.Client;
 import util.ClientsHandler;
 import util.Debug;
@@ -121,6 +122,8 @@ public class ServerSender implements Runnable {
 	 * @return The transferable list of players
 	 */
 	private Transferable transferablePosition() {
+		HashMap<Action, Key> ret = new HashMap<Action, Key>();
+		
 
 		return new Transferable(Action.UPDATE_MOVEMENT, this.client.session.gameData.players);
 

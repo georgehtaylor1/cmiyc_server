@@ -78,7 +78,7 @@ public class GameSession implements GameSessionInterface {
 	 * @see interfaces.GameSessionInterface#addPlayer(game.Player)
 	 */
 	public synchronized void addPlayer(Player _player) {
-		this.gameData.players.add(_player);
+		this.gameData.players.put(_player.clientID,_player);
 	}
 
 	/*

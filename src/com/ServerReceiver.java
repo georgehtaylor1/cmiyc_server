@@ -1,15 +1,11 @@
 package com;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import constants.Commands;
 import constants.Commands.Action;
 import constants.Commands.Key;
 import game.Camera;
-import game.Player;
-import game.Treasure;
 import game.states.PlayerState;
 import game.states.TreasureState;
 import game.util.Position;
@@ -210,14 +206,6 @@ public class ServerReceiver implements Runnable {
 	 */
 	private void updatePlayerPosition(HashMap<Key, Object> object) {
 		this.client.player.position = (Position) object.get(Key.POSITION);
-		// Checks if the player is dragging someone and if so, updates the dragged player's position to be the same as the current player
-		if (this.client.player.dragging != null) {
-			ArrayList<Player> players = this.client.session.gameData.players;
-			for (int i = 0; i < players.size(); i++) {
-				if (players.get(i).clientID == this.client.player.dragging)
-					this.client.session.gameData.players.get(i).position = (Position) object.get(Key.POSITION);
-			}
-		}
 	}
 
 	/**
