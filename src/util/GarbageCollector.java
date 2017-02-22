@@ -1,11 +1,16 @@
 package util;
 
+import launcher.Server;
+
 public class GarbageCollector implements Runnable {
 
 	public volatile Object gc;
 	
-	public GarbageCollector() {
+	private Server server;
+	
+	public GarbageCollector( Server _server ) {
 		this.gc = new Object();
+		this.server = _server;
 	}
 	
 	public void run() {
