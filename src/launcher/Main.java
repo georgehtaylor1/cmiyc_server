@@ -16,7 +16,7 @@ public class Main {
 	private String[] arguments;
 
 	private ServerLauncher gui;
-	private ServerHandler serverHandler;
+	//private ServerHandler serverHandler; TODO: replace with Server
 
 	private int port;
 
@@ -28,18 +28,18 @@ public class Main {
 		this.gui = new ServerLauncher();
 		Debug.say("Initialized Server Launcher GUI.");
 
-		this.serverHandler = null;
+		//this.serverHandler = null;
 		Debug.say("Initialized Server Process Handler to null.");
 
 		this.gui.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.gui.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent _event) {
-				guiExit();
+				//guiExit();
 			}
 		});
 		Debug.say("Set Action Handler for Closing the Launcher GUI.");
 
-		this.gui.mainButton.addActionListener(event -> this.mainButtonPress());
+		//this.gui.mainButton.addActionListener(event -> this.mainButtonPress());
 		Debug.say("Set Action Handler for Pressing the Main Button ( Start / Stop ).");
 
 		this.port = 1234;
@@ -51,9 +51,7 @@ public class Main {
 
 	}
 
-	/**
-	 * End the program when the gui is closed
-	 */
+	/*
 	private void guiExit() {
 
 		Debug.say("Server Launcher Exit process has begun.");
@@ -77,9 +75,6 @@ public class Main {
 
 	}
 
-	/**
-	 * Start or stop the server when the button is pressed
-	 */
 	private void mainButtonPress() {
 
 		Debug.say("Main Button Press process has begun.");
@@ -102,9 +97,6 @@ public class Main {
 
 	}
 
-	/**
-	 * Prepare and start the server
-	 */
 	private void startServer() {
 
 		this.serverHandler = new ServerHandler();
@@ -120,16 +112,14 @@ public class Main {
 
 	}
 
-	/**
-	 * Stop the server
-	 */
 	private void stopServer() {
 
 		this.serverHandler.prepareStop();
 		Debug.say("Prepared Server Handler for Stopping.");
 
 	}
-
+	 */
+	
 	public static void main(String _arguments[]) {
 		new Main(_arguments);
 	}

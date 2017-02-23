@@ -129,8 +129,9 @@ public class Server implements Runnable {
 				}
 
 				Client newClient = new Client();
-				clients.put( newClient.id, newClient );
 				newClient.connect( in, out, sessionsHandler );
+				newClient.bindGC( gc.gc );
+				clients.put( newClient.id, newClient );
 
 				Debug.say("New Client Successfully Processed and Stored.");
 
