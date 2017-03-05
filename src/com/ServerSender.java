@@ -8,7 +8,7 @@ import game.Player;
 import states.ClientState;
 import util.Client;
 import util.Debug;
-import util.Movement;
+import game.util.Movement;
 import util.Transferable;
 
 public class ServerSender implements Runnable {

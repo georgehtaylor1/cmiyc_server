@@ -9,7 +9,7 @@ import game.states.GameState;
 
 public class GameSession implements GameSessionInterface {
 
-	private enum State {
+	public enum State {
 		OFFLINE, ONLINE
 	}
 

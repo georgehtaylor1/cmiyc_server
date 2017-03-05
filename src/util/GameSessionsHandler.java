@@ -11,7 +11,7 @@ import interfaces.GameSessionsHandlerInterface;
 
 public class GameSessionsHandler implements GameSessionsHandlerInterface {
 
-	private ConcurrentHashMap<String, GameSession> sessions;
+	public ConcurrentHashMap<String, GameSession> sessions;
 
 	/*
 	 * (non-Javadoc)
