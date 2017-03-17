@@ -1,0 +1,12 @@
+#serverScreen {
+    -fx-background-color: #404040;
+    -fx-pref-width: 1200;
+    -fx-pref-height: 600;
+}
+
+#button {
+    -fx-background-color: #404040;
+    -fx-pref-width: 200;
+    -fx-pref-height: 100;
+}
+
