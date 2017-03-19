@@ -102,30 +102,10 @@ public class ServerReceiver implements Runnable {
 			case DEPLOY_CAMERA :
 				this.deployCamera( data.object );
 				return;
-			case START_DRAG :
-				this.dragPlayer( data.object );
-				return;
-			case STOP_DRAG :
-				this.dragPlayer( null );
-				return;
 			default :
 				return;
 		}
 
-	}
-
-	/**
-	 * Indicate that a player is now being dragged
-	 * 
-	 * @param object
-	 *            The data from the client
-	 */
-	private void dragPlayer( HashMap<Key, Object> object ) {
-		if( object == null ) {
-			this.client.player.dragging = null;
-		} else {
-			this.client.player.dragging = ( String )object.get( Key.DRAGGED_PLAYER );
-		}
 	}
 
 	/**
