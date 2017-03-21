@@ -1,5 +1,7 @@
 package util;
 
+import java.util.Map.Entry;
+
 import launcher.Server;
 import util.Client.ConnectionState;
 
@@ -41,22 +43,26 @@ public class GarbageCollector implements Runnable {
 	}
 
 	private void clearClients() {
-		// Loop through clients, if any dead, remove them.
-		for(String key : this.server.clients.keySet()) {
-			Client client = this.server.clients.get(key);
-			if (client.connectionState == ConnectionState.DISCONNECTED) {
-				this.server.clients.get(key).session.removePlayer(client.player);
-				this.server.clients.remove(key);
+		
+		for( Entry<String, Client> pair : this.server.clients.entrySet() ) {
+			
+			Client client = pair.getValue();
+			if( client.connectionState == ConnectionState.DISCONNECTED ) {
+				client.session.removePlayer( client.player );
+				this.server.clients.remove( client.id );
 			}
 		}
 	}
 	
 	private void clearSessions() {
-		// Loop through sessions, if any dead, remove them.
-		for(String key : this.server.sessionsHandler.sessions.keySet()) {
-			GameSession session = this.server.sessionsHandler.sessions.get(key);
-			if(session.gameData.players.isEmpty()) this.server.sessionsHandler.endSession(session.id);
+		
+		for( Entry<String, GameSession> pair : this.server.sessionsHandler.sessions.entrySet() ) {
+			
+			GameSession session = pair.getValue();
+			if( session.gameData.players.isEmpty() ) { this.server.sessionsHandler.endSession( session.id ); }
+			
 		}
+		
 	}
 
 }

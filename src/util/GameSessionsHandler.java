@@ -18,19 +18,12 @@ public class GameSessionsHandler implements GameSessionsHandlerInterface {
 	 * 
 	 * @see interfaces.GameSessionsHandlerInterface#findSession(game.Player)
 	 */
-	public GameSession findSession(Player _player) {
+	public GameSession findSession( Player _player ) {
 
-		Iterator<Entry<String, GameSession>> i = this.sessions.entrySet().iterator();
-
-		while (i.hasNext()) {
-
-			Map.Entry<String, GameSession> pair = (Map.Entry<String, GameSession>) i.next();
+		for( Map.Entry<String, GameSession> pair : this.sessions.entrySet() ) {
 
 			GameSession session = pair.getValue();
-
-			if (session.gameData.fits(_player)) {
-				return session;
-			}
+			if( session.gameData.fits( _player ) ) { return session; }
 
 		}
 
@@ -45,7 +38,7 @@ public class GameSessionsHandler implements GameSessionsHandlerInterface {
 	public GameSession newSession() {
 
 		GameSession session = new GameSession();
-		this.sessions.put(session.id, session);
+		this.sessions.put( session.id, session );
 
 		return session;
 
@@ -56,10 +49,10 @@ public class GameSessionsHandler implements GameSessionsHandlerInterface {
 	 * 
 	 * @see interfaces.GameSessionsHandlerInterface#newSession(game.GameData)
 	 */
-	public GameSession newSession(GameData _gameData) {
+	public GameSession newSession( GameData _gameData ) {
 
-		GameSession session = new GameSession(_gameData);
-		this.sessions.put(session.id, session);
+		GameSession session = new GameSession( _gameData );
+		this.sessions.put( session.id, session );
 
 		return session;
 
@@ -70,8 +63,8 @@ public class GameSessionsHandler implements GameSessionsHandlerInterface {
 	 * 
 	 * @see interfaces.GameSessionsHandlerInterface#endSession(util.GameSession)
 	 */
-	public void endSession(GameSession _session) {
-		this.sessions.remove(_session.id);
+	public void endSession( GameSession _session ) {
+		this.sessions.remove( _session.id );
 	}
 
 	/*
@@ -79,8 +72,8 @@ public class GameSessionsHandler implements GameSessionsHandlerInterface {
 	 * 
 	 * @see interfaces.GameSessionsHandlerInterface#endSession(java.lang.String)
 	 */
-	public void endSession(String _sessionID) {
-		this.sessions.remove(_sessionID);
+	public void endSession( String _sessionID ) {
+		this.sessions.remove( _sessionID );
 	}
 
 }

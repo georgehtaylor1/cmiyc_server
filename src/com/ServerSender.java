@@ -113,7 +113,7 @@ public class ServerSender implements Runnable {
 		
 		for( Entry<String, Player> pair : this.client.session.gameData.players.entrySet() ) {
 			
-			Movement movement = new Movement( pair.getKey(), pair.getValue().position, pair.getValue().direction );
+			Movement movement = new Movement( pair.getKey(), pair.getValue().position, pair.getValue().direction, pair.getValue().battery );
 			
 			object.add( movement );
 			
