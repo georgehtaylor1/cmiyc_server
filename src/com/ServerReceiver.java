@@ -2,6 +2,8 @@ package com;
 
 import java.util.HashMap;
 
+import com.util.CommandProcessor;
+
 import constants.Commands.Action;
 import constants.Commands.Key;
 import game.util.Position;
@@ -50,225 +52,15 @@ public class ServerReceiver implements Runnable {
 	 */
 	private synchronized Transferable readFromClient( int _tries ) {
 
-		if( _tries >= this.exhaution ) {
-
-			this.client.disconnect();
-			return null;
-
-		}
+		if( _tries >= this.exhaution ) { this.client.disconnect(); return null; }
 
 		Transferable data = null;
 
-		try {
-			data = ( Transferable )this.client.in.readObject();
-		} catch( Exception _exception ) {
-			this.readFromClient( _tries + 1 );
-		}
+		try { data = ( Transferable )this.client.in.readObject(); }
+		catch( Exception _exception ) { this.readFromClient( _tries + 1 ); }
 
 		return data;
 
-	}
-
-	/**
-	 * Process the read data based on the type of the received data
-	 * 
-	 * @param _data
-	 *            The data to be processed
-	 */
-	private void processData( Transferable _data ) {
-
-		if( _data == null ) {
-			return;
-		}
-
-		Transferable data = _data;
-
-		switch( data.action ) {
-			case UPDATE_USERNAME :
-				this.updateUsername( data.object );
-				return;
-			case UPDATE_PLAYER_STATE :
-				this.updatePlayerState( data.object );
-				return;
-			case UPDATE_CLIENT_STATE :
-				this.updateClientState( data.object );
-				return;
-			case UPDATE_MOVEMENT :
-				this.updatePlayerPosition( data.object );
-				return;
-			case UPDATE_TREASURE_STATE :
-				this.updateTreasureState( data.object );
-				return;
-			case DEPLOY_CAMERA :
-				this.deployCamera( data.object );
-				return;
-			default :
-				return;
-		}
-
-	}
-
-	/**
-	 * Create a new camera for the player and place it
-	 * 
-	 * @param object
-	 *            The data from the client
-	 */
-	private void deployCamera(
-			HashMap<Key, Object> object ) {/*
-											 * TODO: same thing better
-											 * this.client.session.gameData.
-											 * cameras.add((Camera)
-											 * object.get(Key.CAMERA));
-											 * ArrayList<String> ret = new
-											 * ArrayList<String>(); for (int i =
-											 * 0; i <
-											 * this.client.session.gameData.
-											 * players.size(); i++) {
-											 * ret.add(this.client.session.
-											 * gameData.players.get(i).clientID)
-											 * ; } HashMap<Key, Object> trans =
-											 * new HashMap<Key, Object>();
-											 * trans.put(Key.CAMERA,
-											 * this.client.session.gameData.
-											 * cameras);
-											 * clientsHandler.sendTo(ret, new
-											 * Transferable(Action.
-											 * DEPLOY_CAMERA, trans));
-											 */
-	}
-
-	/**
-	 * Update the state of the given treasure
-	 * 
-	 * @param object
-	 *            The data from the client
-	 */
-	private void updateTreasureState(
-			HashMap<Key, Object> object ) {/*
-											 * TODO: same thing better String
-											 * treasureID = (String)
-											 * object.get(Key.TREASURE_ID); for
-											 * (int i = 0; i <
-											 * this.client.session.gameData.
-											 * treasures.size(); i++) { if
-											 * (this.client.session.gameData.
-											 * treasures.get(i).id ==
-											 * treasureID) {
-											 * this.client.session.gameData.
-											 * treasures.get(i).state =
-											 * (TreasureState)
-											 * object.get(Key.TREASURE_STATE); }
-											 * } ArrayList<String> ret = new
-											 * ArrayList<String>(); for (int i =
-											 * 0; i <
-											 * this.client.session.gameData.
-											 * players.size(); i++) {
-											 * ret.add(this.client.session.
-											 * gameData.players.get(i).clientID)
-											 * ; } HashMap<Key, Object> trans =
-											 * new HashMap<Key, Object>();
-											 * trans.put(Key.TREASURE_ID,
-											 * treasureID);
-											 * trans.put(Key.TREASURE_STATE,
-											 * (TreasureState)
-											 * object.get(Key.TREASURE_STATE));
-											 * clientsHandler.sendTo(ret, new
-											 * Transferable(Action.
-											 * UPDATE_TREASURE_STATE, trans));
-											 */
-	}
-
-	/**
-	 * Update the position of the player and any players that they are dragging
-	 * 
-	 * @param object
-	 *            The data from the client
-	 */
-	private void updatePlayerPosition( HashMap<Key, Object> object ) {
-		this.client.player.position = ( Position )object.get( Key.POSITION );
-	}
-
-	/**
-	 * Update the username for the client
-	 * 
-	 * @param _object
-	 *            The data from the client
-	 */
-	private void updateUsername( HashMap<Key, Object> _object ) {
-
-		Debug.say( "Username Update Command Received" );
-
-		String username = ( String )_object.get( Key.UNDEFINED );
-
-		Debug.say( "Username Update Command Completed [ " + username + " ]" );
-
-		this.client.username = username;
-
-		Debug.say( "Sending back confirmation." );
-		this.client.send( new Transferable( Action.UPDATE_ID, this.client.id ) );
-
-	}
-
-	/**
-	 * Update the current state of the player
-	 * 
-	 * @param _object
-	 *            The data from the client
-	 */
-	public void updatePlayerState(
-			HashMap<Key, Object> _object ) {/*
-											 * TODO: same thing better Debug.
-											 * say("Player State Update Command Recieved"
-											 * );
-											 * 
-											 * PlayerState state = (PlayerState)
-											 * _object.get(Key.PLAYER_STATE);
-											 * 
-											 * this.client.player.state = state;
-											 * 
-											 * Debug.
-											 * say("Player State Command Completed"
-											 * );
-											 * 
-											 * ArrayList<String> ret = new
-											 * ArrayList<String>(); for (int i =
-											 * 0; i <
-											 * this.client.session.gameData.
-											 * players.size(); i++) {
-											 * ret.add(this.client.session.
-											 * gameData.players.get(i).clientID)
-											 * ; } HashMap<Key, Object> trans =
-											 * new HashMap<Key, Object>();
-											 * trans.put(Key.PLAYER_STATE,
-											 * this.client.player);
-											 * clientsHandler.sendTo(ret, new
-											 * Transferable(Action.
-											 * UPDATE_PLAYER_STATE, trans));
-											 */
-	}
-
-	/**
-	 * Update the state of the client
-	 * 
-	 * @param _object
-	 *            the data from the client
-	 */
-	public void updateClientState(
-			HashMap<Key, Object> _object ) {/*
-											 * TODO: same thing better Debug.
-											 * say("Client State Update Command Recieved"
-											 * );
-											 * 
-											 * ClientState state = (ClientState)
-											 * _object.get(Key.CLIENT_STATE);
-											 * 
-											 * this.client.state = state;
-											 * 
-											 * Debug.
-											 * say("Client State Command Completed"
-											 * );
-											 */
 	}
 
 	/*
@@ -280,7 +72,7 @@ public class ServerReceiver implements Runnable {
 	public void run() {
 
 		while( this.client.connectionState == Client.ConnectionState.CONNECTED ) {
-			this.processData( this.readFromClient() );
+			new Thread( new CommandProcessor( this.client, this.readFromClient() ) ).start();
 		}
 
 	}
