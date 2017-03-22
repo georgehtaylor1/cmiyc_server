@@ -16,7 +16,7 @@ public class CommandProcessor implements Runnable {
 	public void run() {
 		switch( this.data.action ) {
 			
-			case UPDATE_USERNAME : break;
+			case INIT_CLIENT : break;
 			case UPDATE_PLAYER_STATE : break;
 			case UPDATE_CLIENT_STATE : break;
 			case UPDATE_MOVEMENT : break;
