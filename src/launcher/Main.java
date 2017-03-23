@@ -2,7 +2,6 @@ package launcher;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
 
@@ -16,7 +15,7 @@ public class Main {
 	private String[] arguments;
 
 	private ServerLauncher gui;
-	//private ServerHandler serverHandler; TODO: replace with Server
+	private Server server; TODO: replace with Server
 
 	private int port;
 
@@ -28,7 +27,7 @@ public class Main {
 		this.gui = new ServerLauncher();
 		Debug.say("Initialized Server Launcher GUI.");
 
-		//this.serverHandler = null;
+		this.server = null;
 		Debug.say("Initialized Server Process Handler to null.");
 
 		this.gui.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -39,7 +38,7 @@ public class Main {
 		});
 		Debug.say("Set Action Handler for Closing the Launcher GUI.");
 
-		//this.gui.mainButton.addActionListener(event -> this.mainButtonPress());
+		this.gui.mainButton.addActionListener(event -> this.mainButtonPress());
 		Debug.say("Set Action Handler for Pressing the Main Button ( Start / Stop ).");
 
 		this.port = 1234;
@@ -51,17 +50,17 @@ public class Main {
 
 	}
 
-	/*
+	
 	private void guiExit() {
 
 		Debug.say("Server Launcher Exit process has begun.");
 
-		if (this.serverHandler == null) {
+		if (this.server == null) {
 			System.exit(0);
 			return;
 		}
 
-		switch (this.serverHandler.serverState) {
+		switch (this.server.state) {
 		case STOPPED:
 			System.exit(0);
 			return;
@@ -79,12 +78,12 @@ public class Main {
 
 		Debug.say("Main Button Press process has begun.");
 
-		if (this.serverHandler == null) {
+		if (this.server == null) {
 			this.startServer();
 			return;
 		}
 
-		switch (this.serverHandler.serverState) {
+		switch (this.server.state) {
 		case STOPPED:
 			this.startServer();
 			break;
@@ -99,22 +98,22 @@ public class Main {
 
 	private void startServer() {
 
-		this.serverHandler = new ServerHandler();
+		this.server = new ServerHandler();
 		Debug.say("Initialized Server Process Handler.");
 
-		if (!this.serverHandler.prepareStart(this.gui, this.port)) {
+		if (!this.server.init(this.port)) {
 			return;
 		}
 		Debug.say("Prepared Server Handler for Starting.");
 
-		new Thread(this.serverHandler).start();
+		new Thread(this.server).start();
 		Debug.say("Server Thread Started.");
 
 	}
 
 	private void stopServer() {
 
-		this.serverHandler.prepareStop();
+		this.server.stop();
 		Debug.say("Prepared Server Handler for Stopping.");
 
 	}

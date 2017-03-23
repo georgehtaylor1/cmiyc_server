@@ -1,19 +1,14 @@
 package com;
 
-import java.util.HashMap;
-
 import com.util.CommandProcessor;
 
-import constants.Commands.Action;
-import constants.Commands.Key;
-import game.util.Position;
 import util.Client;
-import util.Debug;
 import util.Transferable;
 
 public class ServerReceiver implements Runnable {
 
-	private Client client;
+	private volatile Client client;
+	private CommandProcessor commandProcessor;
 
 	private final int exhaution = 10;
 
@@ -30,6 +25,7 @@ public class ServerReceiver implements Runnable {
 	public ServerReceiver( Client _client ) {
 
 		this.client = _client;
+		this.commandProcessor = new CommandProcessor( this.client );
 
 	}
 
@@ -71,8 +67,11 @@ public class ServerReceiver implements Runnable {
 	@Override
 	public void run() {
 
+		new Thread( this.commandProcessor ).start();
+		
 		while( this.client.connectionState == Client.ConnectionState.CONNECTED ) {
-			new Thread( new CommandProcessor( this.client, this.readFromClient() ) ).start();
+			this.commandProcessor.queue.offer( this.readFromClient() );
+			this.commandProcessor.monitor.notifyAll();
 		}
 
 	}

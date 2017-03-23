@@ -4,16 +4,20 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.ServerReceiver;
 import com.ServerSender;
 
+import constants.Commands.Action;
+import constants.Commands.Key;
 import game.GameData;
+import game.GameMode;
 import game.Player;
-import states.ClientState;
 import game.states.GameState;
+import states.ClientState;
 
 public class Client {
 
@@ -29,8 +33,8 @@ public class Client {
 	private volatile ClientState state;
 	public volatile ConnectionState connectionState;
 
-	public ObjectInputStream in;
-	public ObjectOutputStream out;
+	public volatile ObjectInputStream in;
+	public volatile ObjectOutputStream out;
 	private ServerReceiver receiver;
 	private ServerSender sender;
 	
@@ -149,6 +153,18 @@ public class Client {
 	public void joinSession(GameSession _session) {
 		this.session = _session;
 		this.session.addPlayer(this.player);
+		//Check if all players have connected and if so, initialise
+		if ((this.session.gameData.mode == GameMode.SHORT && this.session.gameData.players.size() == 3) || (this.session.gameData.mode == GameMode.LONG && this.session.gameData.players.size() == 5)) {
+			this.session.gameData.state = GameState.RUNNING;
+			HashMap<Key, Object> _hash = new HashMap<Key, Object>();
+			_hash.put(Key.CLIENT_STATE, ClientState.PLAYING);
+			Transferable _data = new Transferable(Action.UPDATE_CLIENT_STATE, _hash);
+			ArrayList<String> clients = this.session.getClients();
+			for (int i=0; i < clients.size(); i++) {
+				this.sessionsHandler.clients.get(clients.get(i)).send(_data);
+			}
+			this.session.gameData.state = GameState.RUNNING;
+		}
 	}
 
 	/*

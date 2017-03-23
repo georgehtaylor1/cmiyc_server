@@ -1,11 +1,20 @@
 package interfaces;
 
+import java.util.ArrayList;
+
 import game.Player;
 
 public interface GameSessionInterface {
 
 	// public String id;
 	// public GameData gameData;
+	
+	/**
+	 * Get a list of IDs of clients in the session
+	 * 
+	 * @return ArrayList of client IDs
+	 */
+	public ArrayList<String> getClients();
 
 	/**
 	 * Determine whether the player will fit into the game session

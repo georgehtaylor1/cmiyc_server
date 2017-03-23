@@ -1,8 +1,6 @@
 package util;
 
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import game.GameData;
@@ -10,8 +8,14 @@ import game.Player;
 import interfaces.GameSessionsHandlerInterface;
 
 public class GameSessionsHandler implements GameSessionsHandlerInterface {
-
+	
+	public ConcurrentHashMap<String, Client> clients;
 	public ConcurrentHashMap<String, GameSession> sessions;
+	
+	public GameSessionsHandler(ConcurrentHashMap<String, Client> _clients) {
+		this.clients = _clients;
+		this.sessions = new ConcurrentHashMap<String, GameSession>();
+	}
 
 	/*
 	 * (non-Javadoc)

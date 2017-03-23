@@ -1,11 +1,12 @@
 package util;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import game.GameData;
 import game.Player;
-import interfaces.GameSessionInterface;
 import game.states.GameState;
+import interfaces.GameSessionInterface;
 
 public class GameSession implements GameSessionInterface {
 
@@ -20,7 +21,6 @@ public class GameSession implements GameSessionInterface {
 	 * Create the game session and initialise it with a random ID
 	 */
 	public GameSession() {
-
 		this.id = UUID.randomUUID().toString();
 		this.gameData = new GameData();
 		this.state = State.ONLINE;
@@ -59,6 +59,13 @@ public class GameSession implements GameSessionInterface {
 
 		this.state = State.ONLINE;
 
+	}
+	
+	public synchronized ArrayList<String> getClients() {
+		ArrayList<String> clients = new ArrayList<String>();
+		for (Player p : this.gameData.players.values())
+			clients.add(p.clientID);
+		return clients;
 	}
 
 	/*

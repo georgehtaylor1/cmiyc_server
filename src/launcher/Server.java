@@ -1,6 +1,5 @@
 package launcher;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -8,7 +7,6 @@ import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
 
 import gui.ServerLauncher;
-import states.ServerState;
 import util.Client;
 import util.Debug;
 import util.GameSessionsHandler;
@@ -23,7 +21,7 @@ public class Server implements Runnable {
 	private ServerSocket socket;
 	private int port;
 	
-	public ServerLauncher gui;
+
 	public volatile ConcurrentHashMap<String, Client> clients;
 	public volatile GameSessionsHandler sessionsHandler;
 	private GarbageCollector gc;
@@ -36,7 +34,7 @@ public class Server implements Runnable {
 		
 		this.socket = null;
 		this.port = -1;
-		this.gui = null;
+
 		this.clients = null;
 		this.sessionsHandler = null;
 		this.gc = null;
@@ -66,16 +64,15 @@ public class Server implements Runnable {
 		Debug.say("Changed Properties, set as ready for started.");
 	}
 	
-	public boolean init( ServerLauncher _gui, int _port ) {
+	public boolean init( int _port ) {
 
 		this.state = State.STARTING;
 		
 		this.port = _port;
 		if( ( this.socket = this.openServerSocket() ) == null ) { return false; }
 		
-		this.gui = _gui;
 		this.clients = new ConcurrentHashMap<String, Client>();
-		this.sessionsHandler = new GameSessionsHandler();
+		this.sessionsHandler = new GameSessionsHandler(this.clients);
 		this.gc = new GarbageCollector( this );
 		
 		Debug.say("Changed Properties, set as ready for starting.");
@@ -108,8 +105,8 @@ public class Server implements Runnable {
 
 				Socket socket = _socket;
 
-				ObjectOutputStream out;
-				ObjectInputStream in;
+				ObjectOutputStream out = null;
+				ObjectInputStream in = null;
 
 				try {
 					out = new ObjectOutputStream( socket.getOutputStream() );
@@ -167,7 +164,9 @@ public class Server implements Runnable {
 	}
 
 	public void run() {
-		
+
+		this.startGarbageCollector();		
+
 		this.state = State.STARTED;
 
 		Debug.say( "Server Process Started." );
