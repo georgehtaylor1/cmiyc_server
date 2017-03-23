@@ -16,7 +16,6 @@ import game.states.TreasureState;
 import game.util.Movement;
 import states.ClientState;
 import util.Client;
-import util.Debug;
 import util.Transferable;
 
 public class CommandProcessor implements Runnable {
@@ -51,22 +50,18 @@ public class CommandProcessor implements Runnable {
 	private void processTransferable( Transferable _data ) {
 		switch( _data.action ) {
 			case UPDATE_USERNAME:
-				Debug.say("Updating id");
 				this.client.id = (String) _data.object.get(Key.CLIENT_USERNAME);
 				this.client.player.clientID = (String) _data.object.get(Key.CLIENT_USERNAME);
 				client.sessionsHandler.clients.put(client.id, this.client);
 				this.client.session = client.sessionsHandler.findSession(client.player) ;
 				if (client.session != null) {
-					Debug.say("Joining session");
 					client.session.addPlayer(client.player);
 					HashMap<Key, Object> _hash = new HashMap<Key, Object>();
 					_hash.put(Key.CLIENT_ID, client.id);
 					_hash.put(Key.FACTION, client.player.faction);
 					Transferable t = new Transferable(Action.ADD_PLAYER, _hash);
-					Debug.say("Ready to send");
 					for (String c : client.session.getClients()) {
 						if (!(c.equals(this.client.id))) {
-							Debug.say("Sending to " + c);
 							client.sessionsHandler.clients.get(c).send(t);
 							HashMap<Key, Object> _hash2 = new HashMap<Key, Object>();
 							_hash2.put(Key.CLIENT_ID, c);
@@ -78,7 +73,6 @@ public class CommandProcessor implements Runnable {
 					client.session.getClients().add(client.id);
 				}
 				else {
-					Debug.say("Creating new session");
 					client.session = client.sessionsHandler.newSession();
 					client.session.addPlayer(client.player);
 					client.session.getClients().add(client.id);
