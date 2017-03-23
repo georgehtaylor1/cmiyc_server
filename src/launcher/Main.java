@@ -15,7 +15,7 @@ public class Main {
 	private String[] arguments;
 
 	private ServerLauncher gui;
-	private Server server; TODO: replace with Server
+	private Server server; //TODO: replace with Server
 
 	private int port;
 
@@ -98,7 +98,7 @@ public class Main {
 
 	private void startServer() {
 
-		this.server = new ServerHandler();
+		this.server = new Server();
 		Debug.say("Initialized Server Process Handler.");
 
 		if (!this.server.init(this.port)) {
@@ -117,7 +117,6 @@ public class Main {
 		Debug.say("Prepared Server Handler for Stopping.");
 
 	}
-	 */
 	
 	public static void main(String _arguments[]) {
 		new Main(_arguments);

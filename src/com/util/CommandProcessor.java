@@ -1,6 +1,7 @@
 package com.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import constants.Commands.Action;
@@ -15,6 +16,7 @@ import game.states.TreasureState;
 import game.util.Movement;
 import states.ClientState;
 import util.Client;
+import util.Debug;
 import util.Transferable;
 
 public class CommandProcessor implements Runnable {
@@ -27,17 +29,19 @@ public class CommandProcessor implements Runnable {
 	
 	public CommandProcessor( Client _client ) {
 		this.client = _client;
+		this.queue = new ConcurrentLinkedQueue<Transferable>();
+		this.monitor = new Object();
 	}
 	
 	public void run() {
 		
 		while( this.client.connectionState == Client.ConnectionState.CONNECTED ) {
 		
-			if( this.queue.isEmpty() ) {
+			/**if( this.queue.isEmpty() ) {
 				synchronized( this.monitor ) {
-					try { this.monitor.wait(); } catch( Exception _exception ) { /* God knows. */ }
+					try { this.monitor.wait(); } catch( Exception _exception ) { /* God knows.  }
 				}
-			}
+			}*/
 			
 			if( !this.queue.isEmpty() ){ this.processTransferable( this.queue.poll() ); }
 
@@ -47,7 +51,38 @@ public class CommandProcessor implements Runnable {
 	private void processTransferable( Transferable _data ) {
 		switch( _data.action ) {
 			case UPDATE_USERNAME:
-				this.client.username = (String) _data.object.get(Key.CLIENT_USERNAME);
+				Debug.say("Updating id");
+				this.client.id = (String) _data.object.get(Key.CLIENT_USERNAME);
+				this.client.player.clientID = (String) _data.object.get(Key.CLIENT_USERNAME);
+				client.sessionsHandler.clients.put(client.id, this.client);
+				this.client.session = client.sessionsHandler.findSession(client.player) ;
+				if (client.session != null) {
+					Debug.say("Joining session");
+					client.session.addPlayer(client.player);
+					HashMap<Key, Object> _hash = new HashMap<Key, Object>();
+					_hash.put(Key.CLIENT_ID, client.id);
+					_hash.put(Key.FACTION, client.player.faction);
+					Transferable t = new Transferable(Action.ADD_PLAYER, _hash);
+					Debug.say("Ready to send");
+					for (String c : client.session.getClients()) {
+						if (!(c.equals(this.client.id))) {
+							Debug.say("Sending to " + c);
+							client.sessionsHandler.clients.get(c).send(t);
+							HashMap<Key, Object> _hash2 = new HashMap<Key, Object>();
+							_hash2.put(Key.CLIENT_ID, c);
+							_hash2.put(Key.FACTION, client.sessionsHandler.clients.get(c).player.faction);
+							Transferable t2 = new Transferable(Action.ADD_PLAYER, _hash2);
+							client.send(t2);
+						}
+					}
+					client.session.getClients().add(client.id);
+				}
+				else {
+					Debug.say("Creating new session");
+					client.session = client.sessionsHandler.newSession();
+					client.session.addPlayer(client.player);
+					client.session.getClients().add(client.id);
+				}
 				break;
 			case UPDATE_PLAYER_STATE:
 				String _id = (String) _data.object.get(Key.CLIENT_ID);
@@ -74,7 +109,6 @@ public class CommandProcessor implements Runnable {
 					this.client.player.direction = _mov.direction;
 					this.client.player.battery = _mov.battery;
 				}
-				sendToSession(new Transferable(Action.UPDATE_MOVEMENT, _data));
 				break;
 			case UPDATE_TREASURE_STATE:
 				for (Treasure t : this.client.session.gameData.treasures) {
@@ -96,9 +130,10 @@ public class CommandProcessor implements Runnable {
 	
 	private void sendToSession(Transferable _data) {
 		ArrayList<String> clients = this.client.session.getClients();
-		clients.remove(this.client.id);
-		for (int i=0; i < clients.size(); i++) {
-			this.client.sessionsHandler.clients.get(clients.get(i)).send(_data);
+		for (String c : clients) {
+			if (!(c.equals(client.id))) {
+				this.client.sessionsHandler.clients.get(c).send(_data);
+			}
 		}
 	}
 }

@@ -5,10 +5,9 @@ import java.util.Map.Entry;
 
 import constants.Commands.Action;
 import game.Player;
-import states.ClientState;
+import game.util.Movement;
 import util.Client;
 import util.Debug;
-import game.util.Movement;
 import util.Transferable;
 
 public class ServerSender implements Runnable {
@@ -46,7 +45,7 @@ public class ServerSender implements Runnable {
 		case FINDING: return true;
 		case PREGAME: return true;
 		case PLAYING: return true;
-		default: return false;
+		default: return true;
 		}
 	}
 
@@ -112,10 +111,11 @@ public class ServerSender implements Runnable {
 		ArrayList<Movement> object = new ArrayList<Movement>();
 		
 		for( Entry<String, Player> pair : this.client.session.gameData.players.entrySet() ) {
-			
-			Movement movement = new Movement( pair.getKey(), pair.getValue().position, pair.getValue().direction, pair.getValue().battery );
-			
-			object.add( movement );
+			if (!client.id.equals(pair.getKey())) {
+				Movement movement = new Movement( pair.getKey(), pair.getValue().position, pair.getValue().direction, pair.getValue().battery );
+				
+				object.add( movement );
+			}
 			
 		}
 		
@@ -135,11 +135,11 @@ public class ServerSender implements Runnable {
 
 		while( this.client.connectionState == Client.ConnectionState.CONNECTED ) {
 
-			if( ( this.client.queue.isEmpty() ) && ( this.client.getState() == ClientState.IDLE ) ) {
+			/**if( ( this.client.queue.isEmpty() ) && ( this.client.getState() == ClientState.IDLE ) ) {
 				synchronized( this.senderMonitor ) {
-					try { this.senderMonitor.wait(); } catch( Exception _exception ) { /* God knows. */ }
+					try { this.senderMonitor.wait(); } catch( Exception _exception ) { /* God knows.  }
 				}
-			}
+			}*/
 			
 			if( !this.client.queue.isEmpty()) { this.sendData( this.client.queue.poll() ); }
 			if( this.needsPosition()) { this.sendData( this.transferablePosition() ); }

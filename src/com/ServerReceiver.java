@@ -71,7 +71,9 @@ public class ServerReceiver implements Runnable {
 		
 		while( this.client.connectionState == Client.ConnectionState.CONNECTED ) {
 			this.commandProcessor.queue.offer( this.readFromClient() );
-			this.commandProcessor.monitor.notifyAll();
+			synchronized( this.commandProcessor.monitor ) {
+				this.commandProcessor.monitor.notifyAll();
+			}
 		}
 
 	}
